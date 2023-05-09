@@ -45,13 +45,20 @@ app.get("/profile/:id", async function (req, res) {
 
 // get all data
 app.get("/profile", async function (req, res) {
-  const query = await db`SELECT * FROM users`;
+  try {
+    const query = await db`SELECT * FROM users`;
 
-  res.json({
-    status: true,
-    message: "Get data success",
-    data: query,
-  });
+    res.json({
+      status: true,
+      message: "Get data success",
+      data: query,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "Error in server",
+    });
+  }
 });
 
 // insert data
@@ -164,7 +171,7 @@ app.delete("/profile/:id", async function (req, res) {
     return;
   }
 
-  const query = await db`DELETE FROM users WHERE id = ${id} returning *`
+  const query = await db`DELETE FROM users WHERE id = ${id} returning *`;
 
   res.send({
     status: true,
