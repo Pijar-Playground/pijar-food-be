@@ -1,19 +1,20 @@
-const router = require('express').Router()
-const controller = require('../controllers/profile.controller')
+const router = require("express").Router();
+const controller = require("../controllers/profile.controller");
+const middleware = require("../middleware/jwt.middleware");
 
 // get data by id
-router.get('/profile/:id', controller.getProfileById)
+router.get("/profile/:id", middleware, controller.getProfileById);
 
 // get all data
-router.get('/profile', controller.getAllProfile)
+router.get("/profile", middleware, controller.getAllProfile);
 
 // insert data
-router.post('/profile', controller.addNewProfile)
+router.post("/profile", controller.addNewProfile);
 
 // edit data
-router.patch('/profile/:id', controller.editProfile)
+router.patch("/profile", middleware, controller.editProfile);
 
 // delete data
-router.delete('/profile/:id', controller.deleteProfile)
+router.delete("/profile", middleware, controller.deleteProfile);
 
-module.exports = router
+module.exports = router;

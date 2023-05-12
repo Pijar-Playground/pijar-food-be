@@ -10,6 +10,17 @@ const getUserById = async (id) => {
   }
 }
 
+const getUserByEmail = async (email) => {
+  try {
+    const query =
+      await db`SELECT * FROM users WHERE LOWER(email) = LOWER(${email})`;
+
+    return query;
+  } catch (error) {
+    return error;
+  }
+};
+
 const getAllUser = async () => {
   try {
     const query = await db`SELECT * FROM users`
@@ -65,5 +76,6 @@ module.exports = {
   getAllUser,
   insertUser,
   editUser,
-  deleteUser
-}
+  deleteUser,
+  getUserByEmail,
+};

@@ -1,4 +1,5 @@
 // import / intial
+require("dotenv").config();
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
@@ -10,6 +11,8 @@ const compression = require('compression')
 // import routes
 const profileRoutes = require('./routes/profile.routes')
 const recipeRoutes = require('./routes/recipes.routes')
+const authRoutes = require("./routes/auth.routes");
+
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -32,6 +35,7 @@ app.use(compression())
 // use routing
 app.use(profileRoutes)
 app.use(recipeRoutes)
+app.use(authRoutes);
 
 app.get('/', function (req, res) {
   res.send('Hello World')
