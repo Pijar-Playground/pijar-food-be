@@ -14,6 +14,9 @@ router.post("/profile", controller.addNewProfile);
 // edit data
 router.patch("/profile", middleware, controller.editProfile);
 
+// edit photo profile data
+router.patch("/profile/photo", middleware, controller.editPhoto);
+
 // delete data
 router.delete("/profile", middleware, controller.deleteProfile);
 

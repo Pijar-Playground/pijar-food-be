@@ -2,6 +2,8 @@ const model = require("../models/profile.models");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
+// const cloudinary = require("../cloudinary");
+const cloudinary = require("cloudinary").v2;
 
 function getToken(req) {
   const token = req?.headers?.authorization?.slice(
@@ -186,10 +188,82 @@ const deleteProfile = async function (req, res) {
   });
 };
 
+const editPhoto = async function (req, res) {
+  try {
+    jwt.verify(getToken(req), process.env.PRIVATE_KEY, async (err, { id }) => {
+      const { photo } = req?.files ?? {};
+
+      if (!photo) {
+        res.status(400).send({
+          status: false,
+          message: "Photo is required",
+        });
+      }
+
+      let mimeType = photo.mimetype.split("/")[1];
+      let allowFile = ["jpeg", "jpg", "png", "webp"];
+
+      // cari apakah tipe data yang di upload terdapat salah satu dari list yang ada diatas
+      if (!allowFile?.find((item) => item === mimeType)) {
+        res.status(400).send({
+          status: false,
+          message: "Only accept jpeg, jpg, png, webp",
+        });
+      }
+
+      // validate size image
+      if (photo.size > 2000000) {
+        res.status(400).send({
+          status: false,
+          message: "File to big, max size 2MB",
+        });
+      }
+
+      cloudinary.config({
+        cloud_name: "infomediaon5",
+        api_key: "349237237622967",
+        api_secret: "j_WjXliM4n4DA442p86LZu0WZz8",
+      });
+
+      const upload = cloudinary.uploader.upload(photo.tempFilePath, {
+        public_id: new Date().toISOString(),
+      });
+
+      upload
+        .then(async (data) => {
+          const payload = {
+            photo: data?.secure_url,
+          };
+
+          model.editPhotoUser(payload, id);
+
+          res.status(200).send({
+            status: false,
+            message: "Success upload",
+            data: payload,
+          });
+        })
+        .catch((err) => {
+          res.status(400).send({
+            status: false,
+            message: err,
+          });
+        });
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      status: false,
+      message: "Error on server",
+    });
+  }
+};
+
 module.exports = {
   getProfileById,
   getAllProfile,
   addNewProfile,
   editProfile,
   deleteProfile,
+  editPhoto,
 };
