@@ -78,4 +78,6 @@ router.post('/recipes', async function (req, res) {
   }
 })
 
+router.patch('recipes/photo/:id')
+
 module.exports = router
